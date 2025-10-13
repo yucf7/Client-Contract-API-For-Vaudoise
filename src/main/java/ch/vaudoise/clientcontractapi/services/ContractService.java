@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service class for managing operations related to {@link Contract}.
@@ -23,6 +24,17 @@ import java.util.List;
 public class ContractService {
 
     private final ContractRepository contractRepository;
+
+    /**
+     * Retrieves a contract by its unique identifier.
+     *
+     * @param id the unique identifier of the {@link Contract} entity
+     * @return an {@link Optional} containing the {@link Contract} if found, or
+     *         empty if not found
+     */
+    public Optional<Contract> findById(Long id) {
+        return contractRepository.findById(id);
+    }
 
     /**
      * Creates a new contract with the provided details.
@@ -56,7 +68,8 @@ public class ContractService {
 
     /**
      * Retrieves the active contracts for a given client.
-     * A contract is considered active if its end date is either null or after today's date.
+     * A contract is considered active if its end date is either null or after
+     * today's date.
      *
      * @param client the {@link Client} for whom to retrieve active contracts
      * @return a list of active {@link Contract} entities for the client
@@ -67,11 +80,14 @@ public class ContractService {
     }
 
     /**
-     * Retrieves the active contracts for a given client, updated after a specific date.
-     * A contract is considered active if its end date is either null or after today's date.
+     * Retrieves the active contracts for a given client, updated after a specific
+     * date.
+     * A contract is considered active if its end date is either null or after
+     * today's date.
      *
-     * @param client        the {@link Client} for whom to retrieve active contracts
-     * @param updatedAfter the {@link OffsetDateTime} after which the contracts were updated
+     * @param client       the {@link Client} for whom to retrieve active contracts
+     * @param updatedAfter the {@link OffsetDateTime} after which the contracts were
+     *                     updated
      * @return a list of active {@link Contract} entities for the client
      */
     public List<Contract> getActiveContracts(Client client, OffsetDateTime updatedAfter) {
@@ -83,7 +99,8 @@ public class ContractService {
      * Returns the total cost of all active contracts for a given client.
      * The sum is computed at the database level using {@link BigDecimal}.
      *
-     * @param client the {@link Client} for whom to calculate the total cost of active contracts
+     * @param client the {@link Client} for whom to calculate the total cost of
+     *               active contracts
      * @return the total cost of active contracts for the client
      */
     public BigDecimal getTotalActiveContractsAmount(Client client) {
@@ -92,7 +109,8 @@ public class ContractService {
     }
 
     /**
-     * Closes all active contracts for a client by setting their end date to today's date.
+     * Closes all active contracts for a client by setting their end date to today's
+     * date.
      *
      * @param client the {@link Client} for whom to close the contracts
      */

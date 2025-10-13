@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class CompanyService {
+public class CompanyService implements ClientService<Company> {
 
     private final CompanyRepository companyRepository;
     private final ContractService contractService;
@@ -90,5 +90,17 @@ public class CompanyService {
     public void deleteCompany(Company company) {
         contractService.closeContractsOnClientDeletion(company);
         companyRepository.delete(company);
+    }
+
+    /**
+     * Retrieves a {@link Company} entity by its unique identifier.
+     *
+     * @param id the unique identifier of the {@link Company} entity
+     * @return an {@link Optional} containing the {@link Company} if found, or empty
+     *         if not found
+     */
+    @Override
+    public Optional<Company> getEntityById(Long id) {
+        return companyRepository.findById(id);
     }
 }

@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class PersonService {
+public class PersonService implements ClientService<Person> {
 
     private final PersonRepository personRepository;
     private final ContractService contractService;
@@ -36,7 +36,8 @@ public class PersonService {
      * Retrieves a person by their unique ID.
      *
      * @param id the unique identifier of the person
-     * @return an {@link Optional} containing the {@link Person} if found, or empty if not found
+     * @return an {@link Optional} containing the {@link Person} if found, or empty
+     *         if not found
      */
     public Optional<Person> getPersonById(Long id) {
         return personRepository.findById(id);
@@ -76,4 +77,17 @@ public class PersonService {
         contractService.closeContractsOnClientDeletion(person);
         personRepository.delete(person);
     }
+
+    /**
+     * Retrieves a {@link Person} entity by its unique identifier.
+     *
+     * @param id the unique identifier of the {@link Person} entity
+     * @return an {@link Optional} containing the {@link Person} if found, or empty
+     *         if not found
+     */
+    @Override
+    public Optional<Person> getEntityById(Long id) {
+        return personRepository.findById(id);
+    }
+
 }
