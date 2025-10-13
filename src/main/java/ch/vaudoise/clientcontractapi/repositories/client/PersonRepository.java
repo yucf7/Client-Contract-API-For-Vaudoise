@@ -5,6 +5,11 @@ import org.springframework.stereotype.Repository;
 
 import ch.vaudoise.clientcontractapi.models.entities.client.Person;
 
+/**
+ * Repository interface for {@link Person} entity.
+ * Provides database operations for retrieving and manipulating person records.
+ */
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
+    // all CRUD operations are provided by JpaRepository.
 }

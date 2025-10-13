@@ -100,13 +100,14 @@ http://localhost:8080/swagger-ui.html
 - MapStruct mappers  
 - Database migration (Flyway)  
 - Repository layer  
+- **Service layer (PersonService, CompanyService, ContractService) with full CRUD, active contract filtering, lastModified filtering, and sum of active contracts**  
+- **Add methods in repositories**
 
 🔜 Next steps:
 - Implement REST controllers  
-- Add service layer and business logic  
 - Integrate validation (email, phone, ISO dates)  
 - Write integration & unit tests  
-- Optimize query performance (especially cost sum endpoint)
+- Optimize query performance (if needed)
 
 ---
 
