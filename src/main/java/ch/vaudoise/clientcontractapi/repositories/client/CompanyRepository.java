@@ -1,6 +1,7 @@
 package ch.vaudoise.clientcontractapi.repositories.client;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,7 @@ import ch.vaudoise.clientcontractapi.models.entities.client.Company;
  * Provides database operations for retrieving and manipulating company records.
  */
 @Repository
-public interface CompanyRepository extends JpaRepository<Company, Long> {
+public interface CompanyRepository extends JpaRepository<Company, UUID> {
 
     /**
      * Finds a {@link Company} by its unique company identifier.

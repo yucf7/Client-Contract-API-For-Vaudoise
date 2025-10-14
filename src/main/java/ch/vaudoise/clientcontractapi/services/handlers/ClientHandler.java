@@ -1,6 +1,7 @@
-package ch.vaudoise.clientcontractapi.services.client;
+package ch.vaudoise.clientcontractapi.services.handlers;
 
 import java.util.List;
+import java.util.UUID;
 
 import ch.vaudoise.clientcontractapi.dtos.client.ClientDTO;
 import ch.vaudoise.clientcontractapi.models.entities.client.Client;
@@ -39,7 +40,7 @@ public interface ClientHandler<T extends Client, D extends ClientDTO> {
      * @param id the ID of the client
      * @return the client DTO, or {@code null} if not found
      */
-    D getById(Long id);
+    D getById(String id);
 
     /**
      * Creates a new client using the provided DTO.
@@ -56,14 +57,14 @@ public interface ClientHandler<T extends Client, D extends ClientDTO> {
      * @param dto the DTO containing updated client data
      * @return the updated client DTO, or {@code null} if not found
      */
-    D update(Long id, D dto);
+    D update(String id, D dto);
 
     /**
      * Deletes a client by its ID.
      *
      * @param id the ID of the client to delete
      */
-    void delete(Long id);
+    void delete(String id);
 
     /**
      * Converts a generic {@link ClientDTO} into the specific DTO type {@code D}

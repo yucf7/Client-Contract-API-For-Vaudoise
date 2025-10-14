@@ -6,10 +6,10 @@ import lombok.*;
 import java.time.LocalDate;
 
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class PersonDTO extends ClientDTO {
     @Past(message = "Birthdate must be in the past")
     private LocalDate birthdate;

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 public class ContractDTO {
 
     @NotNull(message = "Client ID is required")
-    private Long clientId;
+    private String clientId;
 
     private LocalDate startDate; 
     private LocalDate endDate;

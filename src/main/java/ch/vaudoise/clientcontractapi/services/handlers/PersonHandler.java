@@ -1,14 +1,16 @@
-package ch.vaudoise.clientcontractapi.services.client;
+package ch.vaudoise.clientcontractapi.services.handlers;
 
 import ch.vaudoise.clientcontractapi.dtos.client.ClientDTO;
 import ch.vaudoise.clientcontractapi.dtos.client.PersonDTO;
 import ch.vaudoise.clientcontractapi.mappers.PersonMapper;
 import ch.vaudoise.clientcontractapi.models.entities.client.Person;
 import ch.vaudoise.clientcontractapi.models.enums.ClientType;
+import ch.vaudoise.clientcontractapi.services.client.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Strategy implementation of {@link ClientHandler} for managing {@link Person} clients.
@@ -58,8 +60,9 @@ public class PersonHandler implements ClientHandler<Person, PersonDTO> {
      * @return the corresponding {@link PersonDTO}, or {@code null} if not found
      */
     @Override
-    public PersonDTO getById(Long id) {
-        return personService.getPersonById(id)
+    public PersonDTO getById(String id) {
+        UUID uuid = toUUID(id);
+        return personService.getPersonById(uuid)
                 .map(personMapper::toDTO)
                 .orElse(null);
     }
@@ -84,8 +87,9 @@ public class PersonHandler implements ClientHandler<Person, PersonDTO> {
      * @return the updated {@link PersonDTO}, or {@code null} if not found
      */
     @Override
-    public PersonDTO update(Long id, PersonDTO dto) {
-        return personService.getPersonById(id)
+    public PersonDTO update(String id, PersonDTO dto) {
+        UUID uuid = toUUID(id);
+        return personService.getPersonById(uuid)
                 .map(existing -> personMapper.toDTO(
                         personService.updatePerson(existing, personMapper.toEntity(dto))
                 ))
@@ -98,8 +102,9 @@ public class PersonHandler implements ClientHandler<Person, PersonDTO> {
      * @param id the ID of the person to delete
      */
     @Override
-    public void delete(Long id) {
-        personService.getPersonById(id).ifPresent(personService::deletePerson);
+    public void delete(String id) {
+        UUID uuid = toUUID(id);
+        personService.getPersonById(uuid).ifPresent(personService::deletePerson);
     }
 
     /**
@@ -115,5 +120,20 @@ public class PersonHandler implements ClientHandler<Person, PersonDTO> {
             throw new IllegalArgumentException("Expected PersonDTO but got: " + genericDto.getClass().getSimpleName());
         }
         return (PersonDTO) genericDto;
+    }
+
+    /**
+     * Utility method to safely convert String to UUID.
+     * Throws IllegalArgumentException if invalid.
+     *
+     * @param id the string representation of UUID
+     * @return the UUID object
+     */
+    private UUID toUUID(String id) {
+        try {
+            return UUID.fromString(id);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Invalid UUID string: " + id, ex);
+        }
     }
 }

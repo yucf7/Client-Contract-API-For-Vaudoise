@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service class for managing operations related to {@link Contract}.
@@ -32,7 +33,7 @@ public class ContractService {
      * @return an {@link Optional} containing the {@link Contract} if found, or
      *         empty if not found
      */
-    public Optional<Contract> findById(Long id) {
+    public Optional<Contract> findById(UUID id) {
         return contractRepository.findById(id);
     }
 

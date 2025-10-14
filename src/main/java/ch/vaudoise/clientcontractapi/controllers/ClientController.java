@@ -5,7 +5,7 @@ import ch.vaudoise.clientcontractapi.dtos.client.CompanyDTO;
 import ch.vaudoise.clientcontractapi.dtos.client.PersonDTO;
 import ch.vaudoise.clientcontractapi.models.entities.client.Client;
 import ch.vaudoise.clientcontractapi.models.enums.ClientType;
-import ch.vaudoise.clientcontractapi.services.client.ClientHandler;
+import ch.vaudoise.clientcontractapi.services.handlers.ClientHandler;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
@@ -81,7 +81,7 @@ public class ClientController extends BaseController {
      * @return the updated {@link ClientDTO}
      */
     @SuppressWarnings("unchecked")
-    private <D extends ClientDTO> D handleUpdate(ClientHandler<? extends Client, ? extends ClientDTO> handler, Long id,
+    private <D extends ClientDTO> D handleUpdate(ClientHandler<? extends Client, ? extends ClientDTO> handler, String id,
             ClientDTO dto) {
         ClientHandler<? extends Client, D> specificHandler = (ClientHandler<? extends Client, D>) handler;
         D specificDto = specificHandler.convertToSpecificDto(dto);
@@ -115,7 +115,7 @@ public class ClientController extends BaseController {
      * @return the client DTO if found, otherwise 404 Not Found
      */
     @GetMapping("/{id}")
-    public ResponseEntity<? extends ClientDTO> getById(@RequestParam ClientType clientType, @PathVariable Long id) {
+    public ResponseEntity<? extends ClientDTO> getById(@RequestParam ClientType clientType, @PathVariable String id) {
         ClientHandler<? extends Client, ? extends ClientDTO> handler = getHandler(clientType);
         ClientDTO dto = handler.getById(id);
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
@@ -129,10 +129,16 @@ public class ClientController extends BaseController {
      * @return the created client DTO
      */
     @PostMapping
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(oneOf = {
-            PersonDTO.class, CompanyDTO.class }, discriminatorProperty = "type")))
-    public ResponseEntity<? extends ClientDTO> create(@RequestParam ClientType clientType, @RequestBody ClientDTO dto) {
-        ClientHandler<? extends Client, ? extends ClientDTO> handler = getHandler(clientType);
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Payload must match the selected clientType.\n\n"
+            +
+            "- For PERSON: include name, birthdate (yyyy-MM-dd), phone\n" +
+            "- For COMPANY: include companyIdentifier", content = @Content(mediaType = "application/json", schema = @Schema(oneOf = {
+                    PersonDTO.class, CompanyDTO.class }, discriminatorProperty = "type")))
+    public ResponseEntity<? extends ClientDTO> create(@RequestBody ClientDTO dto) {
+        ClientHandler<? extends Client, ? extends ClientDTO> handler = getHandler(dto.getType());
+        System.out.println("__________\n");
+        System.out.println(dto.getType().getClass());
+        System.out.println("__________\n");
         ClientDTO created = handleCreate(handler, dto);
         return ResponseEntity.ok(created);
     }
@@ -146,7 +152,7 @@ public class ClientController extends BaseController {
      * @return the updated client DTO, or 404 if not found
      */
     @PutMapping("/{id}")
-    public ResponseEntity<? extends ClientDTO> update(@RequestParam ClientType clientType, @PathVariable Long id,
+    public ResponseEntity<? extends ClientDTO> update(@RequestParam ClientType clientType, @PathVariable String id,
             @RequestBody ClientDTO dto) {
         ClientHandler<? extends Client, ? extends ClientDTO> handler = getHandler(clientType);
         ClientDTO updated = handleUpdate(handler, id, dto);
@@ -161,7 +167,7 @@ public class ClientController extends BaseController {
      * @return 204 No Content if deletion is successful
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@RequestParam ClientType clientType, @PathVariable Long id) {
+    public ResponseEntity<Void> delete(@RequestParam ClientType clientType, @PathVariable String id) {
         ClientHandler<? extends Client, ? extends ClientDTO> handler = getHandler(clientType);
         handler.delete(id);
         return ResponseEntity.noContent().build();

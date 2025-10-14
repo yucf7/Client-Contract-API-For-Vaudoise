@@ -3,6 +3,7 @@ package ch.vaudoise.clientcontractapi.services.client;
 import ch.vaudoise.clientcontractapi.models.entities.client.Client;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Generic service interface for retrieving client entities by ID.
@@ -17,5 +18,5 @@ public interface ClientService<T extends Client> {
      * @param id the ID of the client to retrieve
      * @return an {@link Optional} containing the client entity if found, or empty if not found
      */
-    Optional<T> getEntityById(Long id);
+    Optional<T> getEntityById(UUID id);
 }

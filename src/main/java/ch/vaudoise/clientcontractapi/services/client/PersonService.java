@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service class for managing operations related to {@link Person}.
@@ -39,7 +40,7 @@ public class PersonService implements ClientService<Person> {
      * @return an {@link Optional} containing the {@link Person} if found, or empty
      *         if not found
      */
-    public Optional<Person> getPersonById(Long id) {
+    public Optional<Person> getPersonById(UUID id) {
         return personRepository.findById(id);
     }
 
@@ -86,7 +87,7 @@ public class PersonService implements ClientService<Person> {
      *         if not found
      */
     @Override
-    public Optional<Person> getEntityById(Long id) {
+    public Optional<Person> getEntityById(UUID id) {
         return personRepository.findById(id);
     }
 

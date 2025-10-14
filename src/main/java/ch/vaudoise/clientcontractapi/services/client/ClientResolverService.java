@@ -3,6 +3,9 @@ package ch.vaudoise.clientcontractapi.services.client;
 import ch.vaudoise.clientcontractapi.models.entities.client.Client;
 import ch.vaudoise.clientcontractapi.models.enums.ClientType;
 import lombok.RequiredArgsConstructor;
+
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,7 +28,7 @@ public class ClientResolverService {
      * @return The resolved {@link Client} entity.
      * @throws IllegalArgumentException if the client is not found for the given type.
      */
-    public Client resolveClient(ClientType type, Long id) {
+    public Client resolveClient(ClientType type, UUID id) {
         return switch (type) {
             case PERSON -> personService.getEntityById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Person not found"));

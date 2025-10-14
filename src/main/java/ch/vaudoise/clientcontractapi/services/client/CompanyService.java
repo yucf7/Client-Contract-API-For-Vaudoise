@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service class for managing operations related to {@link Company}.
@@ -38,7 +39,7 @@ public class CompanyService implements ClientService<Company> {
      * @param id the unique identifier of the company
      * @return an {@link Optional} containing the {@link Company} if found, or empty if not found
      */
-    public Optional<Company> getCompanyById(Long id) {
+    public Optional<Company> getCompanyById(UUID id) {
         return companyRepository.findById(id);
     }
 
@@ -100,7 +101,7 @@ public class CompanyService implements ClientService<Company> {
      *         if not found
      */
     @Override
-    public Optional<Company> getEntityById(Long id) {
+    public Optional<Company> getEntityById(UUID id) {
         return companyRepository.findById(id);
     }
 }

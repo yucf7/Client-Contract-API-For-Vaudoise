@@ -1,14 +1,16 @@
-package ch.vaudoise.clientcontractapi.services.client;
+package ch.vaudoise.clientcontractapi.services.handlers;
 
 import ch.vaudoise.clientcontractapi.dtos.client.ClientDTO;
 import ch.vaudoise.clientcontractapi.dtos.client.CompanyDTO;
 import ch.vaudoise.clientcontractapi.mappers.CompanyMapper;
 import ch.vaudoise.clientcontractapi.models.entities.client.Company;
 import ch.vaudoise.clientcontractapi.models.enums.ClientType;
+import ch.vaudoise.clientcontractapi.services.client.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Strategy implementation of {@link ClientHandler} for managing {@link Company} clients.
@@ -23,7 +25,8 @@ public class CompanyHandler implements ClientHandler<Company, CompanyDTO> {
     private final CompanyService companyService;
     private final CompanyMapper companyMapper;
 
-     public ClientType getSupportedClientType() {
+    @Override
+    public ClientType getSupportedClientType() {
         return ClientType.COMPANY;
     }
 
@@ -56,8 +59,9 @@ public class CompanyHandler implements ClientHandler<Company, CompanyDTO> {
      * @return the corresponding {@link CompanyDTO}, or {@code null} if not found
      */
     @Override
-    public CompanyDTO getById(Long id) {
-        return companyService.getCompanyById(id)
+    public CompanyDTO getById(String id) {
+        UUID uuid = toUUID(id);
+        return companyService.getCompanyById(uuid)
                 .map(companyMapper::toDTO)
                 .orElse(null);
     }
@@ -82,8 +86,9 @@ public class CompanyHandler implements ClientHandler<Company, CompanyDTO> {
      * @return the updated {@link CompanyDTO}, or {@code null} if not found
      */
     @Override
-    public CompanyDTO update(Long id, CompanyDTO dto) {
-        return companyService.getCompanyById(id)
+    public CompanyDTO update(String id, CompanyDTO dto) {
+        UUID uuid = toUUID(id);
+        return companyService.getCompanyById(uuid)
                 .map(existing -> companyMapper.toDTO(
                         companyService.updateCompany(existing, companyMapper.toEntity(dto))))
                 .orElse(null);
@@ -95,8 +100,9 @@ public class CompanyHandler implements ClientHandler<Company, CompanyDTO> {
      * @param id the ID of the company to delete
      */
     @Override
-    public void delete(Long id) {
-        companyService.getCompanyById(id).ifPresent(companyService::deleteCompany);
+    public void delete(String id) {
+        UUID uuid = toUUID(id);
+        companyService.getCompanyById(uuid).ifPresent(companyService::deleteCompany);
     }
 
     /**
@@ -112,5 +118,20 @@ public class CompanyHandler implements ClientHandler<Company, CompanyDTO> {
             throw new IllegalArgumentException("Expected CompanyDTO but got: " + genericDto.getClass().getSimpleName());
         }
         return (CompanyDTO) genericDto;
+    }
+
+    /**
+     * Utility method to safely convert String to UUID.
+     * Throws IllegalArgumentException if invalid.
+     *
+     * @param id the string representation of UUID
+     * @return the UUID object
+     */
+    private UUID toUUID(String id) {
+        try {
+            return UUID.fromString(id);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Invalid UUID string: " + id, ex);
+        }
     }
 }
