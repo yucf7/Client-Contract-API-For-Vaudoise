@@ -5,9 +5,9 @@ import ch.vaudoise.clientcontractapi.models.entities.Contract;
 import ch.vaudoise.clientcontractapi.models.entities.client.Client;
 import ch.vaudoise.clientcontractapi.models.entities.client.Person;
 
-import java.util.UUID;
-
 import org.mapstruct.*;
+
+import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public interface ContractMapper {
@@ -19,7 +19,11 @@ public interface ContractMapper {
     Contract toEntity(ContractDTO dto);
 
     @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "client.id", target = "clientId")
+    @Mapping(source = "startDate", target = "startDate")
+    @Mapping(source = "endDate", target = "endDate")
+    @Mapping(source = "costAmount", target = "costAmount")
     ContractDTO toDTO(Contract entity);
 
     default UUID map(String id) {
@@ -34,5 +38,4 @@ public interface ContractMapper {
         client.setId(clientId);
         return client;
     }
-
 }

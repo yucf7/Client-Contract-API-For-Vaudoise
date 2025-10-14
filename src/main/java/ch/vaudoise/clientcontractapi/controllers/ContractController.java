@@ -38,7 +38,7 @@ public class ContractController extends BaseController {
          * @param updatedAfter optional filter for contracts updated after this date
          * @return list of active contract DTOs
          */
-        @GetMapping("/client/{clientId}")
+        @GetMapping("/{clientId}")
         public ResponseEntity<List<ContractDTO>> getActiveContracts(
                         @PathVariable String clientId,
                         @RequestParam ClientType clientType,
@@ -64,7 +64,7 @@ public class ContractController extends BaseController {
          * @param dto        the contract data
          * @return created contract DTO
          */
-        @PostMapping("/client/{clientId}")
+        @PostMapping("/{clientId}")
         public ResponseEntity<ContractDTO> createContract(
                         @PathVariable String clientId,
                         @RequestParam ClientType clientType,
@@ -107,7 +107,7 @@ public class ContractController extends BaseController {
          * @param clientType the type of client
          * @return total cost of active contracts
          */
-        @GetMapping("/client/{clientId}/sum")
+        @GetMapping("/{clientId}/sum")
         public ResponseEntity<Double> getTotalActiveContractsAmount(
                         @PathVariable String clientId,
                         @RequestParam ClientType clientType) {
