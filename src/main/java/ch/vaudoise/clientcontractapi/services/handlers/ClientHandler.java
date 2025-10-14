@@ -1,9 +1,9 @@
 package ch.vaudoise.clientcontractapi.services.handlers;
 
 import java.util.List;
-import java.util.UUID;
 
 import ch.vaudoise.clientcontractapi.dtos.client.ClientDTO;
+import ch.vaudoise.clientcontractapi.dtos.client.ClientUpdateDTO;
 import ch.vaudoise.clientcontractapi.models.entities.client.Client;
 import ch.vaudoise.clientcontractapi.models.enums.ClientType;
 
@@ -74,6 +74,10 @@ public interface ClientHandler<T extends Client, D extends ClientDTO> {
      * @return the specific DTO instance of type {@code D}
      */
     D convertToSpecificDto(ClientDTO genericDto);
+
+
+    D convertToSpecificDto(ClientUpdateDTO updateDto);
+
 
     ClientType getSupportedClientType();
 

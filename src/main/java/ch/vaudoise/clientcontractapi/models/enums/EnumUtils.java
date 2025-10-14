@@ -26,4 +26,13 @@ public class EnumUtils {
     public static String toString(ClientType clientType) {
         return clientType == null ? "" : clientType.name();
     }
+
+    public static <E extends Enum<E>> boolean isEnumValue(Class<E> enumClass, String value) {
+        try {
+            Enum.valueOf(enumClass, value);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
 }

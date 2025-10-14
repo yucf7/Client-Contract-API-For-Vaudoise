@@ -1,5 +1,6 @@
 package ch.vaudoise.clientcontractapi.services;
 
+
 import ch.vaudoise.clientcontractapi.models.entities.Contract;
 import ch.vaudoise.clientcontractapi.models.entities.client.Client;
 import ch.vaudoise.clientcontractapi.repositories.ContractRepository;
@@ -25,6 +26,7 @@ import java.util.UUID;
 public class ContractService {
 
     private final ContractRepository contractRepository;
+
 
     /**
      * Retrieves a contract by its unique identifier.

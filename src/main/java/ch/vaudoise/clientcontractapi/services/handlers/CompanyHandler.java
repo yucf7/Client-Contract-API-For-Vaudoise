@@ -1,7 +1,10 @@
 package ch.vaudoise.clientcontractapi.services.handlers;
 
 import ch.vaudoise.clientcontractapi.dtos.client.ClientDTO;
+import ch.vaudoise.clientcontractapi.dtos.client.ClientUpdateDTO;
 import ch.vaudoise.clientcontractapi.dtos.client.CompanyDTO;
+import ch.vaudoise.clientcontractapi.dtos.client.CompanyUpdateDTO;
+import ch.vaudoise.clientcontractapi.dtos.client.PersonDTO;
 import ch.vaudoise.clientcontractapi.mappers.CompanyMapper;
 import ch.vaudoise.clientcontractapi.models.entities.client.Company;
 import ch.vaudoise.clientcontractapi.models.enums.ClientType;
@@ -13,10 +16,13 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Strategy implementation of {@link ClientHandler} for managing {@link Company} clients.
+ * Strategy implementation of {@link ClientHandler} for managing {@link Company}
+ * clients.
  * <p>
- * This handler performs CRUD operations specific to the {@link ClientType#COMPANY} type,
- * using {@link CompanyService} for business logic and {@link CompanyMapper} for DTO-entity conversion.
+ * This handler performs CRUD operations specific to the
+ * {@link ClientType#COMPANY} type,
+ * using {@link CompanyService} for business logic and {@link CompanyMapper} for
+ * DTO-entity conversion.
  */
 @Service
 @RequiredArgsConstructor
@@ -79,22 +85,6 @@ public class CompanyHandler implements ClientHandler<Company, CompanyDTO> {
     }
 
     /**
-     * Updates an existing {@link Company} with the given ID using the provided {@link CompanyDTO}.
-     *
-     * @param id  the ID of the company to update
-     * @param dto the DTO containing updated company data
-     * @return the updated {@link CompanyDTO}, or {@code null} if not found
-     */
-    @Override
-    public CompanyDTO update(String id, CompanyDTO dto) {
-        UUID uuid = toUUID(id);
-        return companyService.getCompanyById(uuid)
-                .map(existing -> companyMapper.toDTO(
-                        companyService.updateCompany(existing, companyMapper.toEntity(dto))))
-                .orElse(null);
-    }
-
-    /**
      * Deletes a {@link Company} client by its ID.
      *
      * @param id the ID of the company to delete
@@ -110,7 +100,8 @@ public class CompanyHandler implements ClientHandler<Company, CompanyDTO> {
      *
      * @param genericDto the generic DTO to convert
      * @return the specific {@link CompanyDTO}
-     * @throws IllegalArgumentException if the DTO is not an instance of {@link CompanyDTO}
+     * @throws IllegalArgumentException if the DTO is not an instance of
+     *                                  {@link CompanyDTO}
      */
     @Override
     public CompanyDTO convertToSpecificDto(ClientDTO genericDto) {
@@ -133,5 +124,48 @@ public class CompanyHandler implements ClientHandler<Company, CompanyDTO> {
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException("Invalid UUID string: " + id, ex);
         }
+    }
+
+    @Override
+    public CompanyDTO update(String id, CompanyDTO companyDTO) {
+        UUID uuid = UUID.fromString(id);
+        Company existing = companyService.getCompanyById(uuid)
+                .orElseThrow(() -> new IllegalArgumentException("Company not found with id: " + id));
+
+        // Update only allowed fields - explicitly ignore companyIdentifier from
+        // incoming DTO
+        existing.setName(companyDTO.getName());
+        existing.setEmail(companyDTO.getEmail());
+        existing.setPhone(companyDTO.getPhone());
+        // CompanyIdentifier remains unchanged - we completely ignore the incoming value
+
+        Company updated = companyService.updateCompany(existing, existing);
+        return companyMapper.toDTO(updated);
+    }
+
+    /**
+     * Overloaded method for CompanyUpdateDTO
+     */
+    public CompanyDTO update(String id, CompanyUpdateDTO updateDTO) {
+        // Convert to full CompanyDTO for processing
+        CompanyDTO companyDTO = new CompanyDTO();
+        companyDTO.setId(updateDTO.getId());
+        companyDTO.setType(updateDTO.getType());
+        companyDTO.setName(updateDTO.getName());
+        companyDTO.setEmail(updateDTO.getEmail());
+        companyDTO.setPhone(updateDTO.getPhone());
+
+        return update(id, companyDTO);
+    }
+
+    @Override
+    public CompanyDTO convertToSpecificDto(ClientUpdateDTO genericDto) {
+        CompanyDTO companyDTO = new CompanyDTO();
+
+        companyDTO.setName(genericDto.getName());
+        companyDTO.setEmail(genericDto.getEmail());
+        companyDTO.setPhone(genericDto.getPhone());
+
+        return companyDTO;
     }
 }

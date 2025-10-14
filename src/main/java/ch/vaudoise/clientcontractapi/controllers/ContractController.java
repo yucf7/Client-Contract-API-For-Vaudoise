@@ -1,14 +1,11 @@
 package ch.vaudoise.clientcontractapi.controllers;
 
 import ch.vaudoise.clientcontractapi.dtos.ContractDTO;
-import ch.vaudoise.clientcontractapi.mappers.CompanyMapper;
 import ch.vaudoise.clientcontractapi.mappers.ContractMapper;
-import ch.vaudoise.clientcontractapi.mappers.PersonMapper;
 import ch.vaudoise.clientcontractapi.models.entities.client.Client;
 import ch.vaudoise.clientcontractapi.models.enums.ClientType;
-import ch.vaudoise.clientcontractapi.services.client.CompanyService;
-import ch.vaudoise.clientcontractapi.services.client.PersonService;
 import ch.vaudoise.clientcontractapi.services.ContractService;
+import ch.vaudoise.clientcontractapi.services.client.ClientResolverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +28,7 @@ public class ContractController extends BaseController {
 
         private final ContractService contractService;
         private final ContractMapper contractMapper;
-        private final PersonService personService;
-        private final CompanyService companyService;
-        private final PersonMapper personMapper;
-        private final CompanyMapper companyMapper;
+        private final ClientResolverService clientResolverService;
 
         /**
          * Get active contracts for a specific client.
@@ -49,7 +43,7 @@ public class ContractController extends BaseController {
                         @PathVariable String clientId,
                         @RequestParam ClientType clientType,
                         @RequestParam(required = false) OffsetDateTime updatedAfter) {
-                Optional<? extends Client> clientOpt = resolveClient(clientId, clientType);
+                Optional<? extends Client> clientOpt = clientResolverService.resolveClient(clientType, clientId);
                 if (clientOpt.isEmpty())
                         return ResponseEntity.notFound().build();
 
@@ -75,7 +69,7 @@ public class ContractController extends BaseController {
                         @PathVariable String clientId,
                         @RequestParam ClientType clientType,
                         @RequestBody ContractDTO dto) {
-                Optional<? extends Client> clientOpt = resolveClient(clientId, clientType);
+                Optional<? extends Client> clientOpt = clientResolverService.resolveClient(clientType, clientId);
                 if (clientOpt.isEmpty())
                         return ResponseEntity.notFound().build();
 
@@ -117,26 +111,12 @@ public class ContractController extends BaseController {
         public ResponseEntity<Double> getTotalActiveContractsAmount(
                         @PathVariable String clientId,
                         @RequestParam ClientType clientType) {
-                Optional<? extends Client> clientOpt = resolveClient(clientId, clientType);
+                Optional<? extends Client> clientOpt = clientResolverService.resolveClient(clientType, clientId);
                 if (clientOpt.isEmpty())
                         return ResponseEntity.notFound().build();
 
                 return ResponseEntity.ok(
                                 contractService.getTotalActiveContractsAmount(clientOpt.get()).doubleValue());
-        }
-
-        /**
-         * Helper method to resolve a client based on its type.
-         *
-         * @param clientId   the client ID
-         * @param clientType the client type
-         * @return optional containing the client if found
-         */
-        private Optional<? extends Client> resolveClient(String clientId, ClientType clientType) {
-                return switch (clientType) {
-                        case PERSON -> personService.getPersonById(personMapper.map(clientId));
-                        case COMPANY -> companyService.getCompanyById(companyMapper.map(clientId));
-                };
         }
 
 }
