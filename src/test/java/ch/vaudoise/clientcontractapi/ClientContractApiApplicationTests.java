@@ -1,4 +1,4 @@
-package ch.vaudoise.clientcontractapi.client_contract_api;
+package ch.vaudoise.clientcontractapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
