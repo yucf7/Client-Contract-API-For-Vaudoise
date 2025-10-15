@@ -103,13 +103,9 @@ http://localhost:8080/swagger-ui.html
 - Service layer (PersonService, CompanyService, ContractService) with full CRUD, active contract filtering, lastModified filtering, and sum of active contracts 
 - Add methods in repositories
 - Implement REST controllers
-- **Integrate validation (email, phone, ISO dates)**
-
-🔜 Next steps:
-- Write integration & unit tests  
-- Optimize query performance (if needed)
-
----
+- Integrate validation (email, phone, ISO dates)
+- **Write integration & unit tests**
+- **Add docker configuration**
 
 ## 👤 Author
 
