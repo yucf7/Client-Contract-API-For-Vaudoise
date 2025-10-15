@@ -6,6 +6,7 @@ import ch.vaudoise.clientcontractapi.models.entities.client.Client;
 import ch.vaudoise.clientcontractapi.models.enums.ClientType;
 import ch.vaudoise.clientcontractapi.services.ContractService;
 import ch.vaudoise.clientcontractapi.services.client.ClientResolverService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,10 +67,10 @@ public class ContractController extends BaseController {
          */
         @PostMapping("/{clientId}")
         public ResponseEntity<ContractDTO> createContract(
-                        @PathVariable String clientId,
                         @RequestParam ClientType clientType,
-                        @RequestBody ContractDTO dto) {
-                Optional<? extends Client> clientOpt = clientResolverService.resolveClient(clientType, clientId);
+                        @Valid @RequestBody ContractDTO dto) {
+                Optional<? extends Client> clientOpt = clientResolverService.resolveClient(clientType,
+                                dto.getClientId());
                 if (clientOpt.isEmpty())
                         return ResponseEntity.notFound().build();
 

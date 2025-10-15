@@ -8,6 +8,7 @@ import ch.vaudoise.clientcontractapi.models.enums.ClientType;
 import ch.vaudoise.clientcontractapi.services.client.ClientOrchestrationService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +60,7 @@ public class ClientController extends BaseController {
             "- For PERSON: birthdate (yyyy-MM-dd)\n" +
             "- For COMPANY: include companyIdentifier", content = @Content(mediaType = "application/json", schema = @Schema(oneOf = {
                     PersonDTO.class, CompanyDTO.class }, discriminatorProperty = "type")))
-    public ResponseEntity<? extends ClientDTO> create(@RequestBody ClientDTO dto) {
+    public ResponseEntity<? extends ClientDTO> create(@Valid @RequestBody ClientDTO dto) {
         ClientDTO created = clientOrchestrationService.createClient(dto);
         return ResponseEntity.ok(created);
     }
