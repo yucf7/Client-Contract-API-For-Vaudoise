@@ -20,94 +20,174 @@ The project follows a **clean layered architecture** ensuring modularity, mainta
   - `ContractDTO` for contract data transfer.
 - **Mappers (MapStruct)**  
   - `PersonMapper`, `CompanyMapper`, `ContractMapper` — handle conversion between entities and DTOs.
+- **Services & Handlers (Strategy Pattern)**  
+  - Encapsulate client-type-specific logic for `Person` and `Company` via `ClientHandler` implementations.
+- **Repositories (Spring Data JPA)**  
+  - Abstract persistence layer using `JpaRepository` interfaces.
+- **Validation Layer**  
+  - Custom annotations and validators (`@ValidEndDate`, `@ValidCompanyIdentifier`).
+- **Testing Layer**  
+  - Unit and integration tests with JUnit 5, Mockito, and Testcontainers.
 
 ---
 
 ## 📁 Project Structure
-
-```
+```bash
 src/main/java/ch/vaudoise/clientcontractapi/
 │
-├── ClientContractApiApplication.java       # Spring Boot entry point
+├── ClientContractApiApplication.java # Spring Boot entry point
 │
 ├── config/
-│   └── OpenApiConfig.java                  # Swagger/OpenAPI configuration
+│ └── OpenApiConfig.java # Swagger/OpenAPI configuration
+│
+├── controllers/ # REST endpoints
+│ ├── ClientController.java
+│ └── ContractController.java
 │
 ├── dtos/
-│   ├── ContractDTO.java
-│   └── client/
-│       ├── ClientDTO.java
-│       ├── CompanyDTO.java
-│       └── PersonDTO.java
+│ ├── ContractDTO.java
+│ └── client/
+│ ├── ClientDTO.java
+│ ├── CompanyDTO.java
+│ └── PersonDTO.java
 │
 ├── mappers/
-│   ├── CompanyMapper.java
-│   ├── ContractMapper.java
-│   └── PersonMapper.java
+│ ├── CompanyMapper.java
+│ ├── ContractMapper.java
+│ └── PersonMapper.java
 │
 ├── models/
-│   ├── entities/
-│   │   ├── Contract.java
-│   │   └── client/
-│   │       ├── Client.java
-│   │       ├── Company.java
-│   │       └── Person.java
-│   └── enums/
-│       └── ClientType.java
+│ ├── entities/
+│ │ ├── Contract.java
+│ │ └── client/
+│ │ ├── Client.java
+│ │ ├── Company.java
+│ │ └── Person.java
+│ └── enums/
+│ └── ClientType.java
 │
-└── repository/
-    ├── client/
-    │   ├── ClientRepository.java
-    │   ├── PersonRepository.java
-    │   └── CompanyRepository.java
-    └── ContractRepository.java
-     
+├── services/
+│ ├── ContractService.java
+│ └── client/
+│ ├── ClientOrchestrationService.java
+│ ├── ClientService.java
+│ ├── PersonService.java
+│ └── CompanyService.java
+│
+├── handlers/ # Strategy pattern implementations
+│ ├── ClientHandler.java
+│ ├── PersonHandler.java
+│ └── CompanyHandler.java
+│
+└── repositories/
+├── ContractRepository.java
+└── client/
+├── ClientRepository.java
+├── PersonRepository.java
+└── CompanyRepository.java
 ```
-
 ---
 
-## ⚙️ Build & Run
+## ⚙️ Build & Run Locally
 
-Make sure you have **Java 17+** and **Maven** installed.
+### ✅ Prerequisites
+- **Java 17+**
+- **Maven 3.9+**
+- **PostgreSQL** (or Docker if you prefer containers)
 
-### Build
+### 🧱 Build
 ```bash
 ./mvnw clean package
 ```
-
-### Run
+### ▶️ Run
 ```bash
 ./mvnw spring-boot:run
 ```
+This will start the app at:
 
----
-
-## 📚 API Documentation
-
-Once running, the API documentation (Swagger UI) is available at:
-
-```
-http://localhost:8080/swagger-ui.html
+``` bash
+http://localhost:8080/swagger-ui/index.html
 ```
 
----
+### 🧪 Running Tests
 
-## 🚧 Current Progress
+This project includes unit and integration tests covering:
 
-✅ Implemented so far:
-- Project setup & configuration  
-- Entity and DTO structure  
-- MapStruct mappers  
-- Database migration (Flyway)  
-- Repository layer  
-- Service layer (PersonService, CompanyService, ContractService) with full CRUD, active contract filtering, lastModified filtering, and sum of active contracts 
-- Add methods in repositories
-- Implement REST controllers
-- Integrate validation (email, phone, ISO dates)
-- **Write integration & unit tests**
-- **Add docker configuration**
+Services (business logic)
 
-## 👤 Author
+Controllers (REST endpoints)
+
+Validation and error handling
+
+#### Run all tests:
+``` bash
+./mvnw test
+```
+#### Run with detailed logs:
+
+``` bash
+./mvnw test -Dspring.profiles.active=test -Dlogging.level.root=DEBUG
+```
+
+All test reports are generated under:
+
+``` bash
+target/surefire-reports/
+```
+
+Integration tests use **Testcontainers** to spin up isolated PostgreSQL instances automatically so no manual DB setup required for CI/CD.
+
+### 🐳 Docker Setup
+
+#### 🧰 Build the Docker image
+``` bash
+docker build -t client-contract-api .
+```
+
+#### 🚀 Run with Docker Compose
+``` bash
+docker-compose up --build
+```
+
+This will:
+
+Start a PostgreSQL container with client_contract_db
+
+Launch the Spring Boot API container connected to it
+
+Apply Flyway migrations automatically
+
+## 🧹 Stop and clean containers
+
+``` bash
+docker-compose down -v
+```
+
+### 🚧 Current Progress
+
+#### Implemented so far:
+- Project setup & configuration
+- Entity and DTO structure
+- MapStruct mappers
+- Database migration (Flyway)
+- Repository layer
+- Service layer (Person, Company, Contract)
+- REST controllers with proper validation
+- Global exception handling
+- Unit & integration tests (JUnit, Mockito, Testcontainers)
+- Docker & Docker Compose setup for local development
+
+### 🧠 Key Technical Highlights
+- Clean architecture & layered design, isolates domain logic from presentation and persistence.
+- Strategy Pattern for client-type-specific orchestration (Company vs Person).
+- MapStruct for efficient and type-safe DTO ↔ Entity conversions.
+- Validation Layer with custom annotations.
+- Flyway for database version control.
+- OpenAPI (Swagger) for automatic documentation.
+- Testcontainers ensures reproducible and environment-independent tests.
+- Dockerized for full local and CI/CD deploy parity.
+
+#### 👤 Author
 
 **Developed by:** Youssef FRIKHAT  
 **Github:** [yucf7](https://github.com/yucf7)
