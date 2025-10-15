@@ -1,0 +1,30 @@
+version: '3.9'
+services:
+  app:
+    build: .
+    container_name: client-contract-api
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/vaudoise_db
+      - SPRING_DATASOURCE_USERNAME=vaudoise
+      - SPRING_DATASOURCE_PASSWORD=vaudoise
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: vaudoise-db
+    restart: always
+    environment:
+      - POSTGRES_DB=vaudoise_db
+      - POSTGRES_USER=vaudoise
+      - POSTGRES_PASSWORD=vaudoise
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
